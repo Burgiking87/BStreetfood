@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B Streetfood – Burger · Pizza · Fingerfood</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --deep: #111111;
+    --orange: #FF5500;
+    --orange-hot: #FF7A2F;
+    --orange-glow: rgba(255,85,0,0.18);
+    --white: #f5f0eb;
+    --grey: #888;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── CURSOR ── */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--orange);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, opacity 0.2s;
+    mix-blend-mode: normal;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--orange);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.18s ease, width 0.2s, height 0.2s, opacity 0.2s;
+    opacity: 0.5;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; width: 100%;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 6vw;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.95) 60%, transparent);
+    backdrop-filter: blur(4px);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.06em;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--orange); }
+
+  .nav-links {
+    display: flex; gap: 2.4rem; list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--grey);
+    text-decoration: none;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -3px; left: 0;
+    width: 0; height: 1.5px;
+    background: var(--orange);
+    transition: width 0.25s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after { width: 100%; }
+
+  .nav-cta {
+    background: var(--orange);
+    color: var(--black) !important;
+    padding: 9px 22px;
+    font-family: 'Barlow Condensed', sans-serif !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.15em !important;
+    text-transform: uppercase !important;
+    border: none;
+    transition: background 0.2s, transform 0.15s !important;
+  }
+  .nav-cta:hover { background: var(--orange-hot) !important; transform: scale(1.04) !important; }
+  .nav-cta::after { display: none !important; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 0 6vw;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 60% 50%, rgba(255,85,0,0.10) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 80% 20%, rgba(255,85,0,0.06) 0%, transparent 60%);
+  }
+
+  /* Animated grid lines */
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,85,0,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,85,0,0.05) 1px, transparent 1px);
+    background-size: 80px 80px;
+    animation: gridDrift 20s linear infinite;
+  }
+  @keyframes gridDrift {
+    0% { background-position: 0 0; }
+    100% { background-position: 80px 80px; }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+  }
+
+  .hero-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 1.4rem;
+    display: flex; align-items: center; gap: 10px;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero-tag::before {
+    content: ''; display: inline-block;
+    width: 28px; height: 1px; background: var(--orange);
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 14vw, 12rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+  .hero-title .accent { color: var(--orange); }
+  .hero-title .outline {
+    -webkit-text-stroke: 2px rgba(245,240,235,0.2);
+    color: transparent;
+  }
+
+  .hero-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(1rem, 2.5vw, 1.6rem);
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-top: 1.2rem;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  .hero-actions {
+    display: flex; gap: 1.2rem; margin-top: 3rem;
+    animation: fadeUp 0.8s 0.35s ease both;
+  }
+
+  .btn-primary {
+    background: var(--orange);
+    color: var(--black);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 14px 36px;
+    border: none; cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+  .btn-primary:hover {
+    background: var(--orange-hot);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(255,85,0,0.35);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 14px 36px;
+    border: 1px solid rgba(245,240,235,0.25);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: border-color 0.2s, color 0.2s;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+  .btn-outline:hover { border-color: var(--orange); color: var(--orange); }
+
+  /* Floating badge */
+  .hero-badge {
+    position: absolute; right: 6vw; top: 50%;
+    transform: translateY(-50%);
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,85,0,0.3);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    animation: spin 20s linear infinite, fadeIn 1s 0.5s ease both;
+    opacity: 0;
+  }
+  .hero-badge::before {
+    content: '';
+    position: absolute; inset: -8px;
+    border-radius: 50%;
+    border: 1px dashed rgba(255,85,0,0.2);
+    animation: spin 30s linear infinite reverse;
+  }
+  .hero-badge .badge-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    line-height: 1;
+    color: var(--orange);
+  }
+  .hero-badge .badge-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-top: 2px;
+  }
+  @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  /* Scroll arrow */
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    animation: fadeUp 1s 0.8s ease both;
+  }
+  .scroll-hint span {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--grey);
+  }
+  .scroll-arrow {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--orange), transparent);
+    animation: arrowPulse 1.8s ease infinite;
+  }
+  @keyframes arrowPulse {
+    0%,100% { opacity: 0.4; transform: scaleY(0.8); }
+    50% { opacity: 1; transform: scaleY(1); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── DIVIDER ── */
+  .ticker {
+    background: var(--orange);
+    padding: 11px 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .ticker-inner {
+    display: inline-flex;
+    animation: tickerScroll 18s linear infinite;
+  }
+  .ticker-item {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.12em;
+    color: var(--black);
+    margin: 0 2.5rem;
+  }
+  .ticker-dot {
+    color: rgba(0,0,0,0.3);
+    margin: 0 1rem;
+  }
+  @keyframes tickerScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── ABOUT ── */
+  #about {
+    padding: 120px 6vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6vw;
+    align-items: center;
+    position: relative;
+  }
+  #about::before {
+    content: 'B';
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40vw;
+    color: rgba(255,85,0,0.025);
+    top: 50%; left: -5vw;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 0;
+    line-height: 1;
+  }
+  .about-left { position: relative; z-index: 1; }
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 1.2rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::before {
+    content: ''; width: 24px; height: 1px; background: var(--orange);
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 5vw, 5rem);
+    line-height: 0.95;
+    letter-spacing: 0.03em;
+    margin-bottom: 1.8rem;
+  }
+  .section-title .accent { color: var(--orange); }
+
+  .about-text {
+    font-size: 1.05rem;
+    font-weight: 300;
+    line-height: 1.85;
+    color: rgba(245,240,235,0.7);
+    margin-bottom: 1.2rem;
+  }
+
+  .about-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem; margin-top: 3rem;
+  }
+  .stat {
+    border-top: 1px solid rgba(255,85,0,0.3);
+    padding-top: 1.2rem;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    line-height: 1;
+    color: var(--orange);
+  }
+  .stat-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-top: 4px;
+  }
+
+  .about-right {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .food-card {
+    background: var(--deep);
+    border: 1px solid rgba(255,85,0,0.1);
+    padding: 2rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+    cursor: default;
+  }
+  .food-card:nth-child(2) { margin-top: 2.5rem; }
+  .food-card:nth-child(3) { margin-top: -2.5rem; }
+  .food-card::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--orange);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.35s;
+  }
+  .food-card:hover { border-color: rgba(255,85,0,0.35); transform: translateY(-4px); }
+  .food-card:hover::before { transform: scaleX(1); }
+  .food-icon {
+    font-size: 2.4rem; margin-bottom: 1rem;
+    filter: grayscale(0.3);
+  }
+  .food-card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    color: var(--white);
+  }
+  .food-card-desc {
+    font-size: 0.85rem;
+    font-weight: 300;
+    line-height: 1.65;
+    color: var(--grey);
+  }
+
+  /* ── MENU ── */
+  #menu {
+    padding: 100px 6vw;
+    background: var(--deep);
+    position: relative;
+  }
+  #menu::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(255,85,0,0.06), transparent 60%);
+    pointer-events: none;
+  }
+  .menu-header {
+    text-align: center;
+    margin-bottom: 5rem;
+    position: relative; z-index: 1;
+  }
+  .menu-tabs {
+    display: flex; justify-content: center; gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 2.5rem;
+  }
+  .tab-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--grey);
+    border: 1px solid rgba(255,85,0,0.15);
+    padding: 9px 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover, .tab-btn.active {
+    background: var(--orange);
+    color: var(--black);
+    border-color: var(--orange);
+  }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5px;
+    position: relative; z-index: 1;
+  }
+
+  .menu-item {
+    background: var(--black);
+    padding: 2rem;
+    display: flex; gap: 1.2rem;
+    transition: background 0.25s;
+    cursor: default;
+    position: relative;
+  }
+  .menu-item:hover { background: #161616; }
+  .menu-item-emoji {
+    font-size: 2rem;
+    flex-shrink: 0;
+    width: 52px; height: 52px;
+    background: rgba(255,85,0,0.08);
+    display: grid; place-items: center;
+    border-radius: 2px;
+  }
+  .menu-item-info { flex: 1; }
+  .menu-item-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 5px;
+  }
+  .menu-item-desc {
+    font-size: 0.83rem;
+    font-weight: 300;
+    color: var(--grey);
+    line-height: 1.55;
+  }
+  .menu-item-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--orange);
+    flex-shrink: 0;
+    align-self: center;
+  }
+  .menu-badge {
+    position: absolute; top: 1rem; right: 1rem;
+    background: var(--orange);
+    color: var(--black);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+  }
+
+  /* Hide/show menu sections */
+  .menu-section { display: none; }
+  .menu-section.active { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5px; }
+
+  /* ── SPECIALS BANNER ── */
+  .specials-banner {
+    margin: 0 6vw;
+    padding: 4rem 5rem;
+    background: var(--orange);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 2rem;
+    clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
+  }
+  .specials-text .special-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.5);
+    margin-bottom: 0.6rem;
+  }
+  .specials-text h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 0.95;
+    color: var(--black);
+    letter-spacing: 0.03em;
+  }
+  .specials-text p {
+    margin-top: 0.8rem;
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgba(0,0,0,0.65);
+  }
+  .btn-dark {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 14px 36px;
+    border: none; cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: transform 0.15s, box-shadow 0.2s;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  }
+  .btn-dark:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+
+  /* ── ATMOSPHERE ── */
+  #atmosphere {
+    padding: 120px 6vw;
+    position: relative;
+  }
+  .atm-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: 280px 280px;
+    gap: 1rem;
+    margin-top: 4rem;
+  }
+  .atm-cell {
+    border-radius: 2px;
+    overflow: hidden;
+    display: flex; align-items: flex-end;
+    padding: 1.5rem;
+    position: relative;
+    cursor: default;
+    transition: transform 0.3s;
+  }
+  .atm-cell:hover { transform: scale(0.98); }
+  .atm-cell:nth-child(1) { grid-column: span 5; background: #1a1008; }
+  .atm-cell:nth-child(2) { grid-column: span 4; background: #100d08; }
+  .atm-cell:nth-child(3) { grid-column: span 3; background: #0e0b06; }
+  .atm-cell:nth-child(4) { grid-column: span 3; background: #120f08; }
+  .atm-cell:nth-child(5) { grid-column: span 5; background: #0f0c07; }
+  .atm-cell:nth-child(6) { grid-column: span 4; background: #1a1208; }
+
+  /* Fake image overlays */
+  .atm-cell::before {
+    content: attr(data-emoji);
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5rem;
+    opacity: 0.18;
+    background: radial-gradient(ellipse at center, rgba(255,85,0,0.12), transparent 70%);
+  }
+  .atm-cell-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--orange);
+    position: relative; z-index: 1;
+    background: rgba(10,10,10,0.7);
+    padding: 5px 10px;
+  }
+  /* Atmosphere pattern */
+  .atm-cell::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23FF5500' fill-opacity='0.04'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* ── CONTACT/HOURS ── */
+  #contact {
+    padding: 100px 6vw;
+    background: var(--deep);
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 6vw;
+    align-items: start;
+  }
+  .contact-left .section-title { margin-bottom: 2rem; }
+
+  .hours-grid {
+    margin-top: 2rem;
+  }
+  .hours-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .hours-day {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--grey);
+  }
+  .hours-time {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--white);
+  }
+  .hours-today .hours-day { color: var(--orange); }
+  .hours-today .hours-time { color: var(--orange); }
+  .open-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #2ecc71;
+    margin-left: 0.6rem;
+  }
+  .open-badge::before {
+    content: '';
+    width: 7px; height: 7px;
+    background: #2ecc71;
+    border-radius: 50%;
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(46,204,113,0.4); }
+    50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(46,204,113,0); }
+  }
+
+  .contact-right {}
+  .contact-info { margin-top: 1rem; }
+  .contact-item {
+    display: flex; gap: 1.2rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    align-items: flex-start;
+  }
+  .contact-icon {
+    width: 40px; height: 40px;
+    background: rgba(255,85,0,0.1);
+    display: grid; place-items: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,85,0,0.2);
+  }
+  .contact-item-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 4px;
+  }
+  .contact-item-value {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--white);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  a.contact-item-value:hover { color: var(--orange); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 3rem 6vw;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1.5rem;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.06em;
+    color: var(--white);
+  }
+  .footer-logo span { color: var(--orange); }
+  .footer-copy {
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: var(--grey);
+  }
+  .footer-social {
+    display: flex; gap: 1rem;
+  }
+  .social-btn {
+    width: 38px; height: 38px;
+    border: 1px solid rgba(255,255,255,0.12);
+    display: grid; place-items: center;
+    font-size: 0.95rem;
+    text-decoration: none;
+    color: var(--grey);
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .social-btn:hover {
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    #about { grid-template-columns: 1fr; }
+    .about-right { grid-template-columns: 1fr 1fr; }
+    .about-right .food-card:nth-child(2),
+    .about-right .food-card:nth-child(3) { margin: 0; }
+    #contact { grid-template-columns: 1fr; }
+    .atm-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+    .atm-cell { grid-column: span 1 !important; min-height: 160px; }
+    .specials-banner { flex-direction: column; padding: 2.5rem; margin: 0 4vw; }
+    .hero-badge { display: none; }
+    .nav-links { display: none; }
+    .hero-actions { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo"><span>B</span> STREETFOOD</a>
+  <ul class="nav-links">
+    <li><a href="#about">Über uns</a></li>
+    <li><a href="#menu">Speisekarte</a></li>
+    <li><a href="#atmosphere">Galerie</a></li>
+    <li><a href="#contact">Kontakt</a></li>
+    <li><a href="#contact" class="nav-cta">Bestellen</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Burger · Pizza · Fingerfood</div>
+    <h1 class="hero-title">
+      B<span class="accent">.</span><br>
+      <span class="outline">STREET</span><br>
+      FOOD
+    </h1>
+    <p class="hero-sub">Echt. Heiß. Unwiderstehlich.</p>
+    <div class="hero-actions">
+      <a href="#menu" class="btn-primary">Speisekarte</a>
+      <a href="#contact" class="btn-outline">Uns finden</a>
+    </div>
+  </div>
+  <div class="hero-badge">
+    <span class="badge-num">100%</span>
+    <span class="badge-text">Frisch &<br>Handmade</span>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner" id="ticker">
+    <span class="ticker-item">SMASH BURGER</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">STONE PIZZA</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">CRISPY WINGS</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">LOADED FRIES</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">ONION RINGS</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">CHEESE STICKS</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">NACHOS</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">SMASH BURGER</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">STONE PIZZA</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">CRISPY WINGS</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">LOADED FRIES</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">ONION RINGS</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">CHEESE STICKS</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">NACHOS</span><span class="ticker-dot">✦</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-left">
+    <div class="section-label">Über uns</div>
+    <h2 class="section-title">Streetfood<br>auf <span class="accent">höchstem</span><br>Niveau</h2>
+    <p class="about-text">
+      Bei B Streetfood verbinden wir die rohe Energie der Straßenküche mit echter Leidenschaft fürs Handwerk. Jeder Burger wird frisch zubereitet, jede Pizza im Steinofen gebacken – knusprig, saftig, unvergesslich.
+    </p>
+    <p class="about-text">
+      Ob Mittagspause, Abendessen oder das nächste Fingerfood-Catering – wir sorgen für Geschmack ohne Kompromisse.
+    </p>
+    <div class="about-stats">
+      <div class="stat">
+        <div class="stat-num">30+</div>
+        <div class="stat-label">Burger Kreationen</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">20+</div>
+        <div class="stat-label">Pizzasorten</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Frische Zutaten</div>
+      </div>
+    </div>
+  </div>
+  <div class="about-right">
+    <div class="food-card">
+      <div class="food-icon">🍔</div>
+      <div class="food-card-title">Smash Burger</div>
+      <div class="food-card-desc">Doppelt gesmashte Patties, hausgemachte Saucen & frische Buns – für echte Burger-Fans.</div>
+    </div>
+    <div class="food-card">
+      <div class="food-icon">🍕</div>
+      <div class="food-card-title">Steinofen Pizza</div>
+      <div class="food-card-desc">Dünn, knusprig, voller Geschmack. Klassisch italienisch oder unsere eigenen Kreationen.</div>
+    </div>
+    <div class="food-card">
+      <div class="food-icon">🍟</div>
+      <div class="food-card-title">Fingerfood</div>
+      <div class="food-card-desc">Wings, Fries, Rings, Cheese Sticks – perfekt zum Teilen oder als Beilage.</div>
+    </div>
+    <div class="food-card">
+      <div class="food-icon">🥤</div>
+      <div class="food-card-title">Drinks & Saucen</div>
+      <div class="food-card-desc">Hausgemachte Dips, Craft-Drinks & Milkshakes – das perfekte Finish.</div>
+    </div>
+  </div>
+</section>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="menu-header">
+    <div class="section-label" style="justify-content:center">Speisekarte</div>
+    <h2 class="section-title">Was heute <span class="accent">auf dich wartet</span></h2>
+    <div class="menu-tabs">
+      <button class="tab-btn active" onclick="showTab('burger', this)">Burger</button>
+      <button class="tab-btn" onclick="showTab('pizza', this)">Pizza</button>
+      <button class="tab-btn" onclick="showTab('fingerfood', this)">Fingerfood</button>
+      <button class="tab-btn" onclick="showTab('drinks', this)">Drinks</button>
+    </div>
+  </div>
+
+  <!-- BURGER -->
+  <div id="tab-burger" class="menu-section active">
+    <div class="menu-item">
+      <div class="menu-item-emoji">🍔</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Classic B Burger</div>
+        <div class="menu-item-desc">Doppel Smash Patty, Cheddar, Salat, Tomate, Zwiebel, B-Sauce</div>
+      </div>
+      <div class="menu-item-price">9.90</div>
+      <div class="menu-badge">Bestseller</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🔥</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Spicy Inferno</div>
+        <div class="menu-item-desc">Crispy Chicken, Jalapeños, Habanero-Sauce, Coleslaw, Pickles</div>
+      </div>
+      <div class="menu-item-price">10.90</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🧀</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Triple Cheese</div>
+        <div class="menu-item-desc">Triple Patty, Cheddar, American Cheese, Gruyère, Bacon, BBQ</div>
+      </div>
+      <div class="menu-item-price">13.50</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🌱</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Green Power</div>
+        <div class="menu-item-desc">Plant-Based Patty, Avocado, Rucola, Tomaten, Sriracha Mayo</div>
+      </div>
+      <div class="menu-item-price">11.50</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🥓</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Bacon Crasher</div>
+        <div class="menu-item-desc">Smash Patty, crispy Bacon, Egg, BBQ-Sauce, Cheddar, Zwiebeln</div>
+      </div>
+      <div class="menu-item-price">11.90</div>
+      <div class="menu-badge">Neu</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🫙</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Mushroom Swiss</div>
+        <div class="menu-item-desc">Patty, sautierte Pilze, Swiss Käse, Trüffel Mayo, Brioche Bun</div>
+      </div>
+      <div class="menu-item-price">12.50</div>
+    </div>
+  </div>
+
+  <!-- PIZZA -->
+  <div id="tab-pizza" class="menu-section">
+    <div class="menu-item">
+      <div class="menu-item-emoji">🍕</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Margherita Classica</div>
+        <div class="menu-item-desc">San Marzano Tomaten, Fior di Latte, Basilikum, Olivenöl</div>
+      </div>
+      <div class="menu-item-price">9.50</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🥩</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">BBQ Meatlovers</div>
+        <div class="menu-item-desc">BBQ Sauce, Rinderhack, Bacon, Jalapeños, Mozzarella, Cheddar</div>
+      </div>
+      <div class="menu-item-price">13.90</div>
+      <div class="menu-badge">Bestseller</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🧄</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Diavola Furiosa</div>
+        <div class="menu-item-desc">Pikante Salami, Peperoncini, Honig, Mozzarella, Chili-Öl</div>
+      </div>
+      <div class="menu-item-price">12.50</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🍗</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Chicken Ranch</div>
+        <div class="menu-item-desc">Gegrilltes Chicken, Ranch-Sauce, Paprika, Mais, Red Onion</div>
+      </div>
+      <div class="menu-item-price">12.90</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🌿</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Veggie Garden</div>
+        <div class="menu-item-desc">Zucchini, Paprika, Artischocken, Oliven, Feta, Pesto</div>
+      </div>
+      <div class="menu-item-price">11.50</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🧅</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Quattro Formaggi</div>
+        <div class="menu-item-desc">Mozzarella, Gorgonzola, Parmesan, Gruyère, Honig</div>
+      </div>
+      <div class="menu-item-price">12.50</div>
+    </div>
+  </div>
+
+  <!-- FINGERFOOD -->
+  <div id="tab-fingerfood" class="menu-section">
+    <div class="menu-item">
+      <div class="menu-item-emoji">🍗</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Crispy Wings 6x</div>
+        <div class="menu-item-desc">Knusprige Wings, Wahl: BBQ, Buffalo, Honig-Senf oder Sriracha</div>
+      </div>
+      <div class="menu-item-price">8.90</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🍟</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Loaded Fries</div>
+        <div class="menu-item-desc">Pommes, Cheddar-Sauce, Bacon, Jalapeños, Frühlingszwiebeln</div>
+      </div>
+      <div class="menu-item-price">7.50</div>
+      <div class="menu-badge">Fan Fave</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🧅</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Onion Rings</div>
+        <div class="menu-item-desc">Goldbraun frittiert, mit Dip nach Wahl</div>
+      </div>
+      <div class="menu-item-price">5.50</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🧀</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Mozzarella Sticks 5x</div>
+        <div class="menu-item-desc">Panierter Mozzarella, knusprig & ziehhhhend, mit Marinara</div>
+      </div>
+      <div class="menu-item-price">6.50</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🫔</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Nachos Deluxe</div>
+        <div class="menu-item-desc">Tortilla Chips, Cheese, Guacamole, Salsa, Sour Cream, Jalapeños</div>
+      </div>
+      <div class="menu-item-price">8.50</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🌮</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Mini Tacos 4x</div>
+        <div class="menu-item-desc">Street-Style Tacos, Rinderhack oder Chicken, Pico de Gallo</div>
+      </div>
+      <div class="menu-item-price">9.50</div>
+      <div class="menu-badge">Neu</div>
+    </div>
+  </div>
+
+  <!-- DRINKS -->
+  <div id="tab-drinks" class="menu-section">
+    <div class="menu-item">
+      <div class="menu-item-emoji">🥤</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Classic Milkshake</div>
+        <div class="menu-item-desc">Vanille, Schokolade oder Erdbeere – cremig & frisch</div>
+      </div>
+      <div class="menu-item-price">5.90</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🍺</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Craft Beer (0,33l)</div>
+        <div class="menu-item-desc">Wechselnde lokale Craft Biere vom Fass</div>
+      </div>
+      <div class="menu-item-price">4.50</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">🧃</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Fresh Lemonade</div>
+        <div class="menu-item-desc">Hausgemacht, klassisch oder Ingwer-Minze</div>
+      </div>
+      <div class="menu-item-price">3.90</div>
+    </div>
+    <div class="menu-item">
+      <div class="menu-item-emoji">☕</div>
+      <div class="menu-item-info">
+        <div class="menu-item-name">Soft Drinks</div>
+        <div class="menu-item-desc">Cola, Fanta, Sprite, Wasser – 0,4l oder 0,2l</div>
+      </div>
+      <div class="menu-item-price">2.80</div>
+    </div>
+  </div>
+</section>
+
+<!-- SPECIALS BANNER -->
+<div class="specials-banner">
+  <div class="specials-text">
+    <div class="special-label">Tagesangebot</div>
+    <h2>HAPPY HOUR<br>16 – 18 UHR</h2>
+    <p>20% auf alle Burger & Pizzen – jeden Wochentag!</p>
+  </div>
+  <a href="#contact" class="btn-dark">Tisch reservieren</a>
+</div>
+
+<!-- ATMOSPHERE -->
+<section id="atmosphere">
+  <div style="text-align:center">
+    <div class="section-label" style="justify-content:center">Einblicke</div>
+    <h2 class="section-title">Das <span class="accent">B Streetfood</span><br>Feeling</h2>
+  </div>
+  <div class="atm-grid">
+    <div class="atm-cell" data-emoji="🍔"><span class="atm-cell-label">Smash Bar</span></div>
+    <div class="atm-cell" data-emoji="🔥"><span class="atm-cell-label">Steinofen</span></div>
+    <div class="atm-cell" data-emoji="🍕"><span class="atm-cell-label">Pizza Lounge</span></div>
+    <div class="atm-cell" data-emoji="🌃"><span class="atm-cell-label">Street Vibes</span></div>
+    <div class="atm-cell" data-emoji="🍟"><span class="atm-cell-label">Fingerfood</span></div>
+    <div class="atm-cell" data-emoji="🎉"><span class="atm-cell-label">Events</span></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-left">
+    <div class="section-label">Öffnungszeiten</div>
+    <h2 class="section-title">Wann wir <span class="accent">für dich</span><br>da sind</h2>
+    <div class="hours-grid">
+      <div class="hours-row">
+        <span class="hours-day">Montag – Dienstag</span>
+        <span class="hours-time">11:00 – 22:00</span>
+      </div>
+      <div class="hours-row hours-today">
+        <span class="hours-day">Mittwoch <span class="open-badge">Heute</span></span>
+        <span class="hours-time">11:00 – 22:00</span>
+      </div>
+      <div class="hours-row">
+        <span class="hours-day">Donnerstag – Freitag</span>
+        <span class="hours-time">11:00 – 23:00</span>
+      </div>
+      <div class="hours-row">
+        <span class="hours-day">Samstag</span>
+        <span class="hours-time">12:00 – 23:00</span>
+      </div>
+      <div class="hours-row">
+        <span class="hours-day">Sonntag</span>
+        <span class="hours-time">12:00 – 21:00</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="contact-right">
+    <div class="section-label">Kontakt</div>
+    <h2 class="section-title">Komm<br><span class="accent">vorbei</span></h2>
+    <div class="contact-info">
+      <div class="contact-item">
+        <div class="contact-icon">📍</div>
+        <div>
+          <div class="contact-item-label">Adresse</div>
+          <div class="contact-item-value">Musterstraße 12<br>1010 Wien</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">📞</div>
+        <div>
+          <div class="contact-item-label">Telefon</div>
+          <a href="tel:+4312345678" class="contact-item-value">+43 1 234 56 78</a>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">✉️</div>
+        <div>
+          <div class="contact-item-label">E-Mail</div>
+          <a href="mailto:hello@bstreetfood.at" class="contact-item-value">hello@bstreetfood.at</a>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">📲</div>
+        <div>
+          <div class="contact-item-label">Folge uns</div>
+          <div class="contact-item-value">@bstreetfood.wien</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo"><span>B</span> STREETFOOD</div>
+  <div class="footer-copy">© 2025 B Streetfood. Alle Rechte vorbehalten.</div>
+  <div class="footer-social">
+    <a href="#" class="social-btn">📸</a>
+    <a href="#" class="social-btn">🎵</a>
+    <a href="#" class="social-btn">👍</a>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animateCursor() {
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  // Menu tabs
+  function showTab(name, btn) {
+    document.querySelectorAll('.menu-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.food-card, .stat, .menu-item, .atm-cell, .contact-item, .hours-row').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.55s ease, transform 0.55s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
